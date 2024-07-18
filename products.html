@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-commerce Website</title>
+    <title>Products</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,14 +12,13 @@
             background-color: #f8f8f8;
             background-image: url('images/background1.jpg');
             background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+           
             color: white; /* Set default text color */
         }
 
-        header, nav, .product, footer {
-            background-color: rgba(102, 102, 102, 0.0); /* Fully transparent background for header, nav, product containers, and footer */
-            color: white; /* White text for header, nav, product containers, and footer */
+        header {
+            background-color: rgba(102, 102, 102, 0.0); /* Fully transparent background for header */
+            color: white;
             padding: 10px 0;
             text-align: center;
         }
@@ -37,37 +36,36 @@
         header nav ul li a {
             color: white;
             text-decoration: none;
-            padding: 5px 10px;
         }
 
-        header nav ul li a:hover {
-            background-color: rgba(102, 102, 102, 0.2); /* Light grey background on hover */
-        }
-
-        header nav ul li.active a {
-            background-color: #858282; /* Grey background for active link */
+        header nav ul li.active {
+            background-color: #858282; /* Dark grey background for active page */
             border-radius: 5px; /* Rounded corners for active page */
             padding: 8px 12px; /* Padding for active page */
         }
 
-        #featured-products {
+        #product-list {
             margin: 20px;
             text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .product {
-            display: inline-block;
             margin: 20px;
             padding: 20px;
             border: 1px solid #ccc;
             background-color: rgba(102, 102, 102, 0.0); /* Fully transparent background for product containers */
-            color: white; /* White text color */
+            color: white;
             width: 220px;
+            text-align: center;
         }
 
         .product img {
-            max-width: 200px;
+            max-width: 100%;
             height: auto;
+            border-radius: 8px;
         }
 
         .product h3, .product p {
@@ -75,6 +73,7 @@
         }
 
         .product button {
+            margin-top: 10px;
             padding: 8px 12px;
             background-color: rgba(102, 102, 102, 0.0); /* Fully transparent background for buttons */
             color: white; /* White text for buttons */
@@ -84,24 +83,23 @@
         }
 
         .product button:hover {
-            background-color: #4d4c4c; /* Black background on hover */
+            background-color: #4d4c4c; /* Dark grey background on hover */
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to The Watch World</h1>
+        <h1>Our Products</h1>
         <nav>
             <ul>
-                <li><a href="index.html" id="home-link">Home</a></li>
-                <li><a href="products.html" id="products-link">Products</a></li>
-                <li><a href="cart.html" id="cart-link">Cart</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
             </ul>
         </nav>
     </header>
 
-    <section id="featured-products">
-        <h2>Featured Products</h2>
+    <section id="product-list">
         <div class="product">
             <img src="images/product1.jpg" alt="Product 1">
             <h3>Product 1</h3>
@@ -114,23 +112,30 @@
             <p>$20.00</p>
             <button onclick="addToCart('Product 2', 20.00)">Add to Cart</button>
         </div>
-       
+        <div class="product">
+            <img src="images/product3.jpg" alt="Product 3">
+            <h3>Product 3</h3>
+            <p>$30.00</p>
+            <button onclick="addToCart('Product 3', 30.00)">Add to Cart</button>
+        </div>
+        <div class="product">
+            <img src="images/product4.jpg" alt="Product 4">
+            <h3>Product 4</h3>
+            <p>$40.00</p>
+            <button onclick="addToCart('Product 4', 40.00)">Add to Cart</button>
+        </div>
     </section>
 
     <script>
-        // JavaScript to highlight active link in navigation
+        // JavaScript to activate the current page in the navigation
         document.addEventListener('DOMContentLoaded', function () {
-            const url = window.location.href;
-            const homeLink = document.getElementById('home-link');
-            const productsLink = document.getElementById('products-link');
-            const cartLink = document.getElementById('cart-link');
-
-            if (url.includes("index.html")) {
-                homeLink.parentNode.classList.add('active');
-            } else if (url.includes("products.html")) {
-                productsLink.parentNode.classList.add('active');
-            } else if (url.includes("cart.html")) {
-                cartLink.parentNode.classList.add('active');
+            let url = window.location.href;
+            let navLinks = document.querySelectorAll('header nav ul li a');
+            
+            for (let link of navLinks) {
+                if (link.href === url) {
+                    link.parentNode.classList.add('active');
+                }
             }
         });
 

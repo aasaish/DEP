@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            background-image: url('images/background1.jpg');
+            background-size: cover;
+            color: white; /* Set default text color */
+        }
+
+        header {
+            background-color: rgba(102, 102, 102, 0.0); /* Fully transparent background for header */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        header nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        header nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        header nav ul li.active a {
+            background-color: #858282; /* Grey background for active link */
+            border-radius: 5px; /* Rounded corners for active page */
+            padding: 8px 12px; /* Padding for active page */
+        }
+
+        #cart-items {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: rgba(102, 102, 102, 0.0); /* Fully transparent background for product containers */
+            color: white; /* Text color for cart items */
+        }
+
+        .cart-item img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-details h3 {
+            margin: 0;
+        }
+
+        .cart-item-details p {
+            margin: 5px 0;
+        }
+
+        .cart-item button {
+            padding: 8px 12px;
+            background-color: rgba(102, 102, 102, 0.0); /* Fully transparent background for buttons */
+            color: white; /* White text for buttons */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cart-item button:hover {
+            background-color: #4d4c4c; /* Dark grey background on hover */
+        }
+
+        form {
+            margin: 20px;
+            text-align: center;
+        }
+
+        form input[type="text"],
+        form input[type="email"] {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            background-color: rgba(102, 102, 102, 0.0); /* Transparent background for inputs */
+            color: white; /* White text color */
+            border: 1px solid #ccc;
+            width: calc(100% - 22px); /* Full width minus border */
+            box-sizing: border-box; /* Include padding and border in width */
+        }
+
+        form input[type="text"]:focus,
+        form input[type="email"]:focus {
+            outline: none; /* Remove default focus outline */
+            border-color: #4d4c4c; /* Dark grey border on focus */
+        }
+
+        form button[type="submit"],
+        form button[type="button"] {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: rgba(102, 102, 102, 0.0); /* Transparent background for button */
+            color: white; /* White text color */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button[type="submit"]:hover,
+        form button[type="button"]:hover {
+            background-color: #4d4c4c; /* Dark grey background on hover */
+        }
+
+        .warning-message {
+            margin-top: 10px;
+            color: red; /* Red text color for warning */
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Your Cart</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li class="active"><a href="cart.html">Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="cart-items">
+        <h2>Your Cart</h2>
+        <!-- Cart items will be dynamically inserted here -->
+    </section>
+
+    <form id="order-form" action="process_order.php" method="post">
+        <h2>Customer Details</h2>
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="address" placeholder="Address" required>
+        
+        <!-- Warning message -->
+        <div class="warning-message">Download the bill before placing the order.</div>
+        
+        <button type="submit">Place Order</button>
+        <button type="button" id="download-bill">Download Bill</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartItemsSection = document.getElementById('cart-items');
+
+            if (cart.length === 0) {
+                cartItemsSection.innerHTML = '<p>Your cart is empty.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    let cartItem = document.createElement('div');
+                    cartItem.classList.add('cart-item');
+                    
+                    let productImage = document.createElement('img');
+                    productImage.src = `images/product${index + 1}.jpg`; // Assuming index starts from 0
+                    productImage.alt = item.product;
+                    productImage.style.maxWidth = '100px'; // Adjust styling if needed
+                    productImage.style.marginRight = '20px'; // Adjust styling if needed
+                    cartItem.appendChild(productImage);
+                    
+                    let productDetails = document.createElement('div');
+                    productDetails.classList.add('cart-item-details');
+                    productDetails.innerHTML = `<h3>${item.product}</h3><p>$${item.price.toFixed(2)}</p>`;
+                    cartItem.appendChild(productDetails);
+
+                    let deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.addEventListener('click', function() {
+                        // Remove item from cart
+                        cart = cart.filter(cartItem => cartItem.product !== item.product);
+                        // Update localStorage
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        // Remove item from UI
+                        cartItemsSection.removeChild(cartItem);
+                        // Show message if cart is empty
+                        if (cart.length === 0) {
+                            cartItemsSection.innerHTML = '<p>Your cart is empty.</p>';
+                        }
+                    });
+                    cartItem.appendChild(deleteButton);
+                    
+                    cartItemsSection.appendChild(cartItem);
+                });
+            }
+
+            let form = document.getElementById('order-form');
+            let downloadBillButton = document.getElementById('download-bill');
+
+            downloadBillButton.addEventListener('click', function() {
+                let customerName = form.elements['name'].value;
+                let customerEmail = form.elements['email'].value;
+                let customerAddress = form.elements['address'].value;
+
+                let billContent = generateBill(cart, customerName, customerEmail, customerAddress);
+                downloadFile('bill.txt', billContent); // Change 'bill.txt' to your preferred filename and format
+            });
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                let formData = new FormData(form);
+                formData.append('cart', JSON.stringify(cart));
+
+                fetch('process_order.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    localStorage.removeItem('cart');
+                    window.location.href = 'index.html';
+                });
+            });
+        });
+
+        function generateBill(cart, customerName, customerEmail, customerAddress) {
+            let billContent = `Customer Details:\n`;
+            billContent += `Name: ${customerName}\n`;
+            billContent += `Email: ${customerEmail}\n`;
+            billContent += `Address: ${customerAddress}\n\n`;
+
+            billContent += 'Your Bill:\n\n';
+            let total = 0;
+
+            cart.forEach(item => {
+                billContent += `${item.product}: $${item.price.toFixed(2)}\n`;
+                total += item.price;
+            });
+
+            billContent += `\nTotal: $${total.toFixed(2)}`;
+            return billContent;
+        }
+
+        function downloadFile(filename, content) {
+            let element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+</body>
+</html>
